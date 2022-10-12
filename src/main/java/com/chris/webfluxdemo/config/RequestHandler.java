@@ -13,6 +13,8 @@ import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Service
 public class RequestHandler {
 
@@ -62,6 +64,16 @@ public class RequestHandler {
             return Mono.error(new InputValidationException(input));
         }
         Mono<Response> responseMono = mathService.findSquare(input);
+        return ServerResponse
+                .ok()
+                .body(responseMono, Response.class);
+    }
+
+    public Mono<ServerResponse> calculate(ServerRequest serverRequest) {
+        Integer first = Integer.valueOf(serverRequest.pathVariable("first"));
+        Integer second = Integer.valueOf(serverRequest.pathVariable("second"));
+        List<String> op = serverRequest.headers().header("OP");
+        Mono<Response> responseMono = mathService.calculate(first, second, op.get(0));
         return ServerResponse
                 .ok()
                 .body(responseMono, Response.class);

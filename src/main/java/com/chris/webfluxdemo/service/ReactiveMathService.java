@@ -8,6 +8,8 @@ import reactor.core.publisher.Mono;
 
 import java.time.Duration;
 
+import static com.chris.webfluxdemo.dto.CalculatorOperations.fromCode;
+
 @Service
 public class ReactiveMathService {
 
@@ -29,6 +31,12 @@ public class ReactiveMathService {
         return dtoMono
                 .map(dto -> dto.getFirst() * dto.getSecond())
                 .map(Response::new);
+    }
+
+    public Mono<Response> calculate(int first, int second, String operation) {
+        return Mono.just(fromCode(operation).calculate(first, second))
+                .map(Response::new);
+
     }
 
 }
